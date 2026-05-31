@@ -1,0 +1,118 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>edgar-mcp — SEC filings inside your agent</title>
+  <meta name="description" content="An MCP server for SEC EDGAR: resolve companies, browse Reg CF/D/A raises, screen deal economics, and read insider trades — over public SEC data." />
+  <link rel="stylesheet" href="/style.css" />
+</head>
+<body>
+  <header class="site">
+    <div class="wrap">
+      <a class="brand" href="/">mcpwright<span class="dot">.</span></a>
+      <nav>
+        <a href="#install">Install</a>
+        <a href="https://github.com/mcpwright/edgar-mcp">GitHub</a>
+      </nav>
+    </div>
+  </header>
+
+  <main class="wrap">
+    <div class="hero">
+      <p class="kicker">edgar-mcp</p>
+      <h1>SEC filings, inside your agent.</h1>
+      <p class="lede">
+        An <a href="https://modelcontextprotocol.io">MCP</a> server that lets an LLM
+        resolve companies, browse new securities offerings, screen the actual deal
+        economics, and read insider trades — straight from the SEC. All read-only,
+        all public data, no API key.
+      </p>
+    </div>
+
+    <section>
+      <h2>What you can ask</h2>
+      <p class="muted">Real exchanges, driven entirely by the tools below.</p>
+
+      <div class="example">
+        <p class="q">Does StartEngine have any filings? Who runs it, and what are insiders trading?</p>
+        <p class="a">Resolves <b>StartEngine Crowdfunding, Inc.</b> (a private-then-public filer the
+        ticker map alone can't find), lists its filings, and returns the roster — CEO Howard Marks
+        (Director / Officer / 10% owner), CRO, CFO, CCO, CMO — plus recent Form 4 trades, e.g. an
+        open-market sale of 3,827 shares at $1.60.</p>
+      </div>
+
+      <div class="example">
+        <p class="q">What new Reg D raises were filed in California this week?</p>
+        <p class="a">Browses recent Form D filings filtered to CA, newest first — issuer, form,
+        date, and a link — ready to screen.</p>
+      </div>
+
+      <div class="example">
+        <p class="q">For that raise, how much are they raising and who's behind it?</p>
+        <p class="a">Parses the Form D: total offering, amount sold and remaining, minimum
+        investment, number of investors, industry, revenue range, security type, exemptions,
+        and the officers / directors / promoters — structured, not guessed.</p>
+      </div>
+
+      <div class="example">
+        <p class="q">Summarize Apple's latest 10-K risk factors, and show its headline financials.</p>
+        <p class="a">Opens the filing, returns the document text (HTML stripped, paginated) to
+        summarize, and pulls XBRL financials — FY revenue, net income, assets, equity, cash.</p>
+      </div>
+    </section>
+
+    <section>
+      <h2>Tools</h2>
+      <table>
+        <tr><th>Tool</th><th>What it does</th></tr>
+        <tr><td><code>lookup_issuer</code></td><td>Name/ticker → CIK. Public <em>and</em> private / non-exchange filers.</td></tr>
+        <tr><td><code>list_filings</code></td><td>An issuer's recent filings, newest first; optional form filter.</td></tr>
+        <tr><td><code>search_filings</code></td><td>Full-text search across filing documents.</td></tr>
+        <tr><td><code>get_recent_offerings</code></td><td>Recent Reg CF (C) / Reg D (D) / Reg A (1-A) raises; optional state filter.</td></tr>
+        <tr><td><code>get_filing</code></td><td>Open a filing: metadata + every document with links.</td></tr>
+        <tr><td><code>get_filing_text</code></td><td>A document's text (HTML stripped), paginated — for reading/summarizing.</td></tr>
+        <tr><td><code>get_form_d_details</code></td><td>Parse a Reg D raise: amount, sold, investors, industry, people.</td></tr>
+        <tr><td><code>get_form_c_details</code></td><td>Parse a Reg CF raise: target/max, price, terms, two-year financials.</td></tr>
+        <tr><td><code>get_company_facts</code></td><td>XBRL headline financials for public companies.</td></tr>
+        <tr><td><code>get_insider_trades</code></td><td>Recent Form 4 transactions: owner, action, shares, price.</td></tr>
+        <tr><td><code>get_insiders</code></td><td>A company's insiders (officers, directors, &gt;10% owners) and roles.</td></tr>
+      </table>
+    </section>
+
+    <section id="install">
+      <h2>Install</h2>
+      <p class="muted">Requires Python 3.12+ and <a href="https://docs.astral.sh/uv/">uv</a>.</p>
+
+      <h3>Claude Code</h3>
+      <pre>claude mcp add edgar -- uvx edgar-mcp</pre>
+
+      <h3>Claude Desktop</h3>
+      <p class="muted">Add to <code>claude_desktop_config.json</code>:</p>
+      <pre>{
+  "mcpServers": {
+    "edgar": { "command": "uvx", "args": ["edgar-mcp"] }
+  }
+}</pre>
+
+      <p class="muted" style="margin-top:14px;">
+        The SEC asks for a descriptive contact in the <code>User-Agent</code> — set
+        <code>EDGAR_MCP_USER_AGENT="your-app you@example.com"</code>. The server throttles,
+        retries, and caches for you.
+      </p>
+      <p style="margin-top:18px;">
+        Source, full tool reference, and roadmap →
+        <a href="https://github.com/mcpwright/edgar-mcp">github.com/mcpwright/edgar-mcp</a>
+      </p>
+    </section>
+  </main>
+
+  <footer class="site">
+    <div class="wrap">
+      Part of <a href="/">mcpwright</a> · built by
+      <a href="https://github.com/devender">Devender Gollapally</a> ·
+      <a href="https://github.com/mcpwright/edgar-mcp">repo</a>
+    </div>
+  </footer>
+</body>
+</html>

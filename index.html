@@ -1,0 +1,68 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>mcpwright — well-crafted MCP servers</title>
+  <meta name="description" content="A suite of well-crafted, production-grade Model Context Protocol servers. Built by Devender Gollapally." />
+  <link rel="stylesheet" href="/style.css" />
+</head>
+<body>
+  <header class="site">
+    <div class="wrap">
+      <a class="brand" href="/">mcpwright<span class="dot">.</span></a>
+      <nav>
+        <a href="/edgar/">edgar-mcp</a>
+        <a href="https://github.com/mcpwright">GitHub</a>
+      </nav>
+    </div>
+  </header>
+
+  <main class="wrap">
+    <div class="hero">
+      <p class="kicker">Model Context Protocol</p>
+      <h1>Well-crafted MCP servers.</h1>
+      <p class="lede">
+        <code>mcpwright</code> <span class="muted">(noun)</span> — a maker of MCP servers.
+        Each one brings a real-world data source into your agent through a tight,
+        well-documented tool surface: typed structured output, clear descriptions
+        the model can reason about, and read-only by default.
+      </p>
+    </div>
+
+    <section>
+      <h2>Servers</h2>
+      <a class="card" href="/edgar/">
+        <span class="badge">● live</span>
+        <h3>edgar-mcp</h3>
+        <p class="muted">
+          SEC EDGAR inside your agent — resolve any company (public or private),
+          browse Reg CF / Reg D / Reg A raises, screen the actual deal economics,
+          and read insider trades. 11 tools over public SEC data.
+        </p>
+      </a>
+      <p class="muted" style="margin-top:18px;">More on the way.</p>
+    </section>
+
+    <section>
+      <h2>How these are built</h2>
+      <ul class="clean">
+        <li><b>Official SDK.</b> Python, on Anthropic's official <code>mcp</code> SDK.</li>
+        <li><b>Typed, structured output.</b> Tools return Pydantic models, so agents get data, not just text.</li>
+        <li><b>Read-only by default.</b> Annotated and safe to run, with clear, actionable errors.</li>
+        <li><b>Easy to run.</b> <code>uvx &lt;server&gt;-mcp</code>, with copy-paste config for Claude Desktop &amp; Code.</li>
+        <li><b>Tested &amp; CI-gated.</b> ruff + mypy + a real test suite on every change.</li>
+      </ul>
+    </section>
+  </main>
+
+  <footer class="site">
+    <div class="wrap">
+      Built by <a href="https://github.com/devender">Devender Gollapally</a> —
+      Principal Software Engineer, production agentic AI in regulated finance, ERC-1450 co-author.
+      · <a href="https://devender.me">devender.me</a>
+      · <a href="https://github.com/mcpwright">github.com/mcpwright</a>
+    </div>
+  </footer>
+</body>
+</html>
