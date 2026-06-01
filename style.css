@@ -7,8 +7,17 @@
   --accent: #58a6ff;
   --accent-soft: #1f6feb;
   --green: #3fb950;
-  --mono: ui-monospace, SFMono-Regular, "SF Mono", Menlo, Consolas, monospace;
+  --serif: "Fraunces", Georgia, "Times New Roman", serif;
+  --mono: "JetBrains Mono", ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
   --sans: -apple-system, BlinkMacSystemFont, "Segoe UI", Helvetica, Arial, sans-serif;
+}
+
+/* Display cut for the wordmark + headings: high optical size, "wonky"
+   calligraphic alternates on. (font-variation-settings overrides the
+   higher-level props, so all axes are set explicitly.) */
+.display {
+  font-family: var(--serif);
+  font-variation-settings: "opsz" 144, "wght" 600, "SOFT" 0, "WONK" 1;
 }
 
 * { box-sizing: border-box; }
@@ -19,8 +28,10 @@ body {
   margin: 0;
   background: var(--bg);
   color: var(--text);
-  font-family: var(--sans);
-  line-height: 1.6;
+  font-family: var(--serif);
+  font-optical-sizing: auto;
+  font-size: 17px;
+  line-height: 1.65;
   -webkit-font-smoothing: antialiased;
 }
 
@@ -33,19 +44,29 @@ header.site {
 header.site .wrap {
   display: flex; align-items: center; justify-content: space-between; gap: 16px;
 }
-.brand { font-family: var(--mono); font-weight: 600; font-size: 18px; color: var(--text); text-decoration: none; }
+.brand { font-family: var(--serif); font-size: 23px; color: var(--text); text-decoration: none;
+  font-variation-settings: "opsz" 40, "wght" 600, "SOFT" 0, "WONK" 1; }
 .brand .dot { color: var(--accent); }
 nav a { color: var(--muted); text-decoration: none; margin-left: 20px; font-size: 14px; }
 nav a:hover { color: var(--text); }
 
 .hero { padding: 72px 0 40px; }
-.hero h1 { font-size: clamp(30px, 5vw, 46px); line-height: 1.1; margin: 0 0 16px; letter-spacing: -0.02em; }
-.hero .lede { font-size: 19px; color: var(--muted); max-width: 640px; margin: 0; }
+.hero h1 {
+  font-size: clamp(46px, 8vw, 84px); line-height: 1.02; margin: 0 0 20px; letter-spacing: -0.005em;
+  font-family: var(--serif); font-variation-settings: "opsz" 144, "wght" 600, "SOFT" 0, "WONK" 1;
+}
+.hero .lede { font-size: 20px; color: var(--muted); max-width: 640px; margin: 0; }
 .kicker { font-family: var(--mono); color: var(--accent); font-size: 13px; letter-spacing: 0.05em; text-transform: uppercase; margin: 0 0 14px; }
 
 section { padding: 28px 0; }
-h2 { font-size: 24px; letter-spacing: -0.01em; margin: 0 0 16px; }
-h3 { font-size: 17px; margin: 24px 0 8px; }
+h2 {
+  font-size: 32px; letter-spacing: 0; margin: 0 0 16px;
+  font-family: var(--serif); font-variation-settings: "opsz" 80, "wght" 600, "SOFT" 0, "WONK" 1;
+}
+h3 {
+  font-size: 21px; margin: 24px 0 8px;
+  font-family: var(--serif); font-variation-settings: "opsz" 36, "wght" 600, "SOFT" 0, "WONK" 1;
+}
 p { color: var(--text); }
 .muted { color: var(--muted); }
 
