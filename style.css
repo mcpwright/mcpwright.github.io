@@ -26,7 +26,10 @@ html { scroll-behavior: smooth; }
 
 body {
   margin: 0;
-  background: var(--bg);
+  background:
+    radial-gradient(1100px 460px at 50% -180px, rgba(88, 166, 255, 0.12), transparent 70%),
+    var(--bg);
+  background-repeat: no-repeat;
   color: var(--text);
   font-family: var(--serif);
   font-optical-sizing: auto;
@@ -134,3 +137,34 @@ figure.demo figcaption { color: var(--muted); font-size: 13px; text-align: cente
 footer.site { border-top: 1px solid var(--border); margin-top: 48px; padding: 28px 0 60px; color: var(--muted); font-size: 14px; }
 footer.site a { color: var(--muted); }
 footer.site a:hover { color: var(--text); }
+
+/* ---- terminal mockup (hero) ---- */
+.terminal {
+  margin-top: 40px;
+  background: #0a0e14;
+  border: 1px solid var(--border);
+  border-radius: 12px;
+  overflow: hidden;
+  box-shadow: 0 24px 70px -28px rgba(0, 0, 0, 0.75);
+  font-family: var(--mono);
+  font-size: 13.5px;
+}
+.terminal .bar { display: flex; align-items: center; gap: 8px; padding: 11px 14px; background: #161b22; border-bottom: 1px solid var(--border); }
+.terminal .bar i { width: 12px; height: 12px; border-radius: 50%; display: inline-block; }
+.terminal .bar .r { background: #ff5f56; } .terminal .bar .y { background: #febc2e; } .terminal .bar .g { background: #28c840; }
+.terminal .bar .ttl { margin-left: 8px; color: var(--muted); font-size: 12px; }
+.terminal .body { padding: 18px 20px; color: var(--text); }
+.terminal .body > div { line-height: 1.95; }
+.terminal .body .indent { padding-left: 1.4em; }
+.terminal .p { color: var(--accent); }      /* prompt ❯ */
+.terminal .dim { color: var(--muted); }
+.terminal .tool { color: #d2a8ff; }          /* tool call */
+.terminal .ok { color: var(--green); }
+
+/* ---- syntax tokens for code blocks (hand-authored, no JS) ---- */
+pre .cmd { color: #d2a8ff; }    /* command name */
+pre .flag { color: #79c0ff; }   /* flags / subcommands */
+pre .str { color: #a5d6ff; }    /* strings */
+pre .key { color: #7ee787; }    /* json keys */
+pre .punct { color: var(--muted); }
+pre .cmt { color: #8b949e; font-style: italic; }

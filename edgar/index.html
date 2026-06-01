@@ -122,13 +122,13 @@
       <p class="muted">Requires Python 3.12+ and <a href="https://docs.astral.sh/uv/">uv</a>.</p>
 
       <h3>Claude Code</h3>
-      <pre>claude mcp add edgar -- uvx edgar-mcp</pre>
+      <pre><span class="cmd">claude</span> <span class="flag">mcp add</span> edgar <span class="punct">--</span> <span class="cmd">uvx</span> mcpwright-edgar</pre>
 
       <h3>Claude Desktop</h3>
       <p class="muted">Add to <code>claude_desktop_config.json</code>:</p>
       <pre>{
-  "mcpServers": {
-    "edgar": { "command": "uvx", "args": ["edgar-mcp"] }
+  <span class="key">"mcpServers"</span>: {
+    <span class="key">"edgar"</span>: { <span class="key">"command"</span>: <span class="str">"uvx"</span>, <span class="key">"args"</span>: [<span class="str">"mcpwright-edgar"</span>] }
   }
 }</pre>
 
