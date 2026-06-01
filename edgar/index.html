@@ -132,6 +132,19 @@
   }
 }</pre>
 
+      <h3>OpenAI &amp; other MCP clients</h3>
+      <p class="muted">It's a standard stdio MCP server — so it works beyond Claude: the
+      OpenAI Agents SDK, Cursor, VS Code, Cline, Goose, Zed, and more all launch it the
+      same way.</p>
+      <pre>{
+  <span class="key">"mcpServers"</span>: {
+    <span class="key">"edgar"</span>: { <span class="key">"command"</span>: <span class="str">"uvx"</span>, <span class="key">"args"</span>: [<span class="str">"mcpwright-edgar"</span>] }
+  }
+}</pre>
+      <p class="muted">An OpenAI Agents SDK (Python) example is in the
+      <a href="https://github.com/mcpwright/edgar-mcp#openai-agents-sdk-python">README</a>.
+      <span class="dim">(Hosted chat connectors like ChatGPT want a remote HTTP server; this runs locally over stdio.)</span></p>
+
       <p class="muted" style="margin-top:14px;">
         The SEC asks for a descriptive contact in the <code>User-Agent</code> — set
         <code>EDGAR_MCP_USER_AGENT="your-app you@example.com"</code>. The server throttles,
