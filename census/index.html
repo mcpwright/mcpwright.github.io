@@ -1,0 +1,189 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>census-mcp — U.S. Census data by ZIP, inside your agent</title>
+  <meta name="description" content="An MCP server for U.S. Census (ACS) data by ZIP: income, demographics, housing, and education — bulk-downloaded once into a local store, then served offline." />
+
+  <link rel="icon" href="/favicon.svg" type="image/svg+xml" />
+  <link rel="icon" href="/favicon-32.png" sizes="32x32" type="image/png" />
+  <link rel="apple-touch-icon" href="/apple-touch-icon.png" />
+
+  <meta property="og:type" content="website" />
+  <meta property="og:site_name" content="mcpwright" />
+  <meta property="og:title" content="census-mcp — U.S. Census data by ZIP, inside your agent" />
+  <meta property="og:description" content="Profile any ZIP — income, demographics, housing, and education — from the Census Bureau's ACS. Bulk-loaded once, then served offline." />
+  <meta property="og:url" content="https://mcpwright.com/census/" />
+  <meta property="og:image" content="https://mcpwright.com/og.png" />
+  <meta name="twitter:card" content="summary_large_image" />
+
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght,SOFT,WONK@9..144,300..700,0..100,0..1&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="/style.css" />
+</head>
+<body>
+  <header class="site">
+    <div class="wrap">
+      <a class="brand" href="/">mcpwright<span class="dot">.</span></a>
+      <nav>
+        <a href="#install">Install</a>
+        <a href="https://github.com/mcpwright/census-mcp">GitHub</a>
+      </nav>
+    </div>
+  </header>
+
+  <main class="wrap">
+    <div class="hero">
+      <p class="kicker">census-mcp</p>
+      <h1>Any ZIP, fully profiled.</h1>
+      <p class="lede">
+        An <a href="https://modelcontextprotocol.io">MCP</a> server that lets an LLM
+        profile any U.S. ZIP code — income, demographics, housing, and education —
+        straight from the Census Bureau's American Community Survey. Read-only, all
+        public data, bulk-downloaded once then served instantly offline.
+      </p>
+
+      <div class="terminal" aria-hidden="true">
+        <div class="bar"><i class="r"></i><i class="y"></i><i class="g"></i><span class="ttl">claude — census</span></div>
+        <div class="body">
+          <div><span class="p">❯</span> uvx mcpwright-census setup&nbsp;&nbsp;<span class="dim"># one-time: bulk-load ACS into a local store</span></div>
+          <div><span class="p">❯</span> compare ZIPs 94027, 10021, 90069 by income — profile the richest</div>
+          <div><span class="tool">⏺ census</span><span class="dim"> · compare_zips → get_income → get_housing → get_education</span></div>
+          <div><span class="ok">→</span> 94027 (Atherton, CA) — median household income <span class="ok">$250k+</span></div>
+          <div class="indent dim">$2M+ median home · 87.6% owner-occupied · 52.2% hold a graduate degree</div>
+        </div>
+      </div>
+    </div>
+
+    <section>
+      <h2>See it in action</h2>
+      <p class="muted">One prompt in Claude Code, start to finish:</p>
+      <blockquote class="prompt">Using census, compare ZIPs 94027, 10021, and 90069 by household income — which is wealthiest, and what's it actually like there?</blockquote>
+
+      <h3>What happened</h3>
+      <ol class="walkthrough">
+        <li>Claude called <code>compare_zips(["94027","10021","90069"], "median_household_income")</code> — ranked highest-first: <b>94027</b> ($250k+), <b>10021</b> Upper East Side ($158,677), <b>90069</b> West Hollywood ($107,987).</li>
+        <li>It profiled the leader with <code>get_income</code>, <code>get_housing</code>, and <code>get_education</code>: <b>Atherton, CA</b> — per-capita income $188,761, <b>65.6%</b> of households earning $200k+, a <b>$2M+</b> median home value, <b>87.6%</b> owner-occupied, and <b>83.2%</b> of adults holding a bachelor's degree or higher (52.2% a graduate degree).</li>
+        <li>It flagged the honest caveat: $250,001 and $2,000,001 are the ACS <em>top-codes</em> (the Census cap), not exact figures — Atherton simply runs past the top of the scale.</li>
+      </ol>
+      <p class="muted">Every figure comes from the local ACS store the server built on first run — not the model's memory.</p>
+    </section>
+
+    <section>
+      <h2>What you can ask</h2>
+      <p class="muted">Real exchanges, driven entirely by the tools below.</p>
+
+      <div class="example">
+        <p class="q">How wealthy is ZIP 94027, really?</p>
+        <p class="a">Resolves <b>Atherton, CA</b>: median household income hits the ACS cap of
+        $250,001, per-capita income is $188,761, and <b>65.6%</b> of its 2,236 households earn
+        $200k+ — with the note that $250,001 is a top-code, not an exact number.</p>
+      </div>
+
+      <div class="example">
+        <p class="q">Rank 94027, 10021, 60601, and 90069 by income.</p>
+        <p class="a">Returns them highest-first: Atherton <b>$250k+</b>, Upper East Side
+        <b>$158,677</b>, Chicago's Loop <b>$121,458</b>, West Hollywood <b>$107,987</b> — one
+        metric, several ZIPs, sorted.</p>
+      </div>
+
+      <div class="example">
+        <p class="q">What are the ZIP codes for Cambridge, Massachusetts?</p>
+        <p class="a">Reverse lookup: returns <b>02139, 02141, 02142, 02140, 02138</b> — each
+        ~100% inside the city — plus 02472 at just 0.7% (it's mostly Watertown), ranked by how
+        much of each ZIP's land lies in the place. Pass a state to disambiguate same-named towns.</p>
+      </div>
+
+      <div class="example">
+        <p class="q">Tell me about housing and schooling around MIT (02139).</p>
+        <p class="a">Pulls median home value, gross rent, and owner-occupied share from
+        <code>get_housing</code>, and from <code>get_education</code>: of ~26,700 adults 25+,
+        <b>79.5%</b> hold a bachelor's degree or higher and <b>49%</b> a graduate degree.</p>
+      </div>
+    </section>
+
+    <section>
+      <h2>Tools</h2>
+      <table>
+        <tr><th>Tool</th><th>What it does</th></tr>
+        <tr><td><code>lookup_zip</code></td><td>Confirm a ZIP maps to a Census ZCTA; returns name, total population, and the ACS vintage.</td></tr>
+        <tr><td><code>get_income</code></td><td>Median household income, per-capita income, households, and % earning $200k+.</td></tr>
+        <tr><td><code>get_demographics</code></td><td>Total population and median age.</td></tr>
+        <tr><td><code>get_housing</code></td><td>Median home value, median gross rent, occupied units, and % owner-occupied.</td></tr>
+        <tr><td><code>get_education</code></td><td>Of adults 25+, the % with a bachelor's+ and the % with a graduate/professional degree.</td></tr>
+        <tr><td><code>compare_zips</code></td><td>Rank several ZIPs by one metric (income, age, home value, attainment, …), highest first.</td></tr>
+        <tr><td><code>find_zips</code></td><td>Reverse lookup: the ZIPs within a city/town, ranked by how much of each ZIP's land lies there.</td></tr>
+        <tr><td><code>get_acs_variable</code></td><td>Escape hatch: the raw value of any stored ACS variable, by code or friendly name.</td></tr>
+      </table>
+      <p class="muted">ZIP ≈ ZCTA (ZIP Code Tabulation Area): they mostly coincide, but ~2% of ZIPs
+      (PO-box-only / non-residential) have no ZCTA and return a clear error. All figures are ACS
+      5-year <em>estimates</em>.</p>
+    </section>
+
+    <section id="install">
+      <h2>Install</h2>
+      <p class="muted">Requires Python 3.12+, <a href="https://docs.astral.sh/uv/">uv</a>, and a
+      free <a href="https://api.census.gov/data/key_signup.html">Census API key</a> (instant —
+      it's only needed for the one-time bulk download).</p>
+
+      <pre><span class="cmd">export</span> CENSUS_API_KEY=your-free-key
+<span class="cmd">uvx</span> mcpwright-census <span class="flag">setup</span>&nbsp;&nbsp;&nbsp;&nbsp;<span class="cmt"># one-time: bulk-download the ACS dataset into a local store</span></pre>
+
+      <h3>Claude Code</h3>
+      <pre><span class="cmd">claude</span> <span class="flag">mcp add</span> census <span class="flag">-e</span> CENSUS_API_KEY=your-free-key <span class="punct">--</span> <span class="cmd">uvx</span> mcpwright-census</pre>
+
+      <h3>Claude Desktop</h3>
+      <p class="muted">Add to <code>claude_desktop_config.json</code>:</p>
+      <pre>{
+  <span class="key">"mcpServers"</span>: {
+    <span class="key">"census"</span>: {
+      <span class="key">"command"</span>: <span class="str">"uvx"</span>,
+      <span class="key">"args"</span>: [<span class="str">"mcpwright-census"</span>],
+      <span class="key">"env"</span>: { <span class="key">"CENSUS_API_KEY"</span>: <span class="str">"your-free-key"</span> }
+    }
+  }
+}</pre>
+
+      <h3>OpenAI &amp; other MCP clients</h3>
+      <p class="muted">It's a standard stdio MCP server — so it works beyond Claude: the
+      OpenAI Agents SDK, Cursor, VS Code, Cline, Goose, Zed, and more all launch it the
+      same way (pass <code>CENSUS_API_KEY</code> in the environment).</p>
+      <pre>{
+  <span class="key">"mcpServers"</span>: {
+    <span class="key">"census"</span>: {
+      <span class="key">"command"</span>: <span class="str">"uvx"</span>,
+      <span class="key">"args"</span>: [<span class="str">"mcpwright-census"</span>],
+      <span class="key">"env"</span>: { <span class="key">"CENSUS_API_KEY"</span>: <span class="str">"your-free-key"</span> }
+    }
+  }
+}</pre>
+
+      <p class="muted" style="margin-top:14px;">
+        The first run downloads the full ACS dataset (~33k ZCTAs) into a local SQLite store, so
+        every later lookup is instant and offline — no per-query network calls, no rate limits.
+        <code>mcpwright-census refresh</code> re-pulls when a new ACS vintage drops; the key is
+        needed only for those downloads.
+      </p>
+      <p style="margin-top:18px;">
+        Source, full tool reference, and roadmap →
+        <a href="https://github.com/mcpwright/census-mcp">github.com/mcpwright/census-mcp</a>
+      </p>
+      <p class="muted">
+        Questions or ideas? → <a href="https://github.com/mcpwright/census-mcp/discussions">Discussions</a>
+        &nbsp;·&nbsp; found a bug? → <a href="https://github.com/mcpwright/census-mcp/issues">Issues</a>
+      </p>
+    </section>
+  </main>
+
+  <footer class="site">
+    <div class="wrap">
+      Part of <a href="/">mcpwright</a> · built by
+      <a href="https://github.com/devender">Devender Gollapally</a> ·
+      <a href="https://github.com/mcpwright/census-mcp">repo</a> ·
+      <a href="https://github.com/mcpwright/census-mcp/discussions">questions</a>
+    </div>
+  </footer>
+</body>
+</html>
