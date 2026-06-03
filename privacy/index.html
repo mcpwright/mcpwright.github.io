@@ -72,8 +72,12 @@
         by <code>find_zips</code> (no key needed). These happen during <code>setup</code>/<code>refresh</code>
         (or lazily on first use); after that, lookups are served from a local store with <b>no
         further network calls</b>.</li>
-        <li><b>edgar-mcp</b> → the U.S. SEC EDGAR API (<code>data.sec.gov</code>), to fetch
-        public filings on request.</li>
+        <li><b>edgar-mcp</b> → the U.S. SEC's EDGAR services (<code>data.sec.gov</code>,
+        <code>efts.sec.gov</code>, <code>www.sec.gov</code>), to fetch public filings on
+        request — no API key. The SEC's fair-access policy asks for a descriptive
+        <code>User-Agent</code> with contact info; whatever you set in
+        <code>EDGAR_MCP_USER_AGENT</code> is sent to the SEC with each request, and nowhere
+        else. Responses are cached in memory only; nothing is persisted to disk.</li>
       </ul>
       <p>These are U.S. government data services. Your use of them is governed by their own
       terms and privacy policies (<a href="https://www.census.gov/privacy">census.gov/privacy</a>,
