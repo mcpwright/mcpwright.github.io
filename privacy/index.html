@@ -66,10 +66,12 @@
       <p>The only outbound network requests a server makes are to the <b>public data source it
       wraps</b>, to fetch the public data you asked for:</p>
       <ul class="clean">
-        <li><b>census-mcp</b> → the U.S. Census Bureau API (<code>api.census.gov</code>), to
-        download the public American Community Survey dataset. This happens during
-        <code>setup</code>/<code>refresh</code> using <em>your own</em> Census API key; after
-        that, lookups are served from a local store with <b>no further network calls</b>.</li>
+        <li><b>census-mcp</b> → the U.S. Census Bureau, to download public reference data:
+        <code>api.census.gov</code> for the American Community Survey dataset (using <em>your
+        own</em> Census API key), and <code>www2.census.gov</code> for the place-lookup file used
+        by <code>find_zips</code> (no key needed). These happen during <code>setup</code>/<code>refresh</code>
+        (or lazily on first use); after that, lookups are served from a local store with <b>no
+        further network calls</b>.</li>
         <li><b>edgar-mcp</b> → the U.S. SEC EDGAR API (<code>data.sec.gov</code>), to fetch
         public filings on request.</li>
       </ul>
