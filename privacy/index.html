@@ -1,0 +1,119 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Privacy Policy — mcpwright</title>
+  <meta name="description" content="Privacy policy for the mcpwright suite of MCP servers. They run locally, collect no personal data, and have no telemetry." />
+
+  <link rel="icon" href="/favicon.svg" type="image/svg+xml" />
+  <link rel="icon" href="/favicon-32.png" sizes="32x32" type="image/png" />
+  <link rel="apple-touch-icon" href="/apple-touch-icon.png" />
+
+  <meta property="og:type" content="website" />
+  <meta property="og:site_name" content="mcpwright" />
+  <meta property="og:title" content="Privacy Policy — mcpwright" />
+  <meta property="og:description" content="The mcpwright MCP servers run locally, collect no personal data, and have no telemetry." />
+  <meta property="og:url" content="https://mcpwright.com/privacy/" />
+  <meta property="og:image" content="https://mcpwright.com/og.png" />
+  <meta name="twitter:card" content="summary_large_image" />
+
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght,SOFT,WONK@9..144,300..700,0..100,0..1&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="/style.css" />
+</head>
+<body>
+  <header class="site">
+    <div class="wrap">
+      <a class="brand" href="/">mcpwright<span class="dot">.</span></a>
+      <nav>
+        <a href="/edgar/">edgar-mcp</a>
+        <a href="/census/">census-mcp</a>
+        <a href="https://github.com/mcpwright">GitHub</a>
+      </nav>
+    </div>
+  </header>
+
+  <main class="wrap">
+    <div class="hero">
+      <p class="kicker">Privacy</p>
+      <h1>Privacy Policy</h1>
+      <p class="lede">
+        The short version: every mcpwright server runs <b>locally on your machine</b>,
+        collects <b>no personal data</b>, and sends <b>no telemetry</b> anywhere.
+      </p>
+    </div>
+
+    <section>
+      <p class="muted">Last updated 2026-06-02. This policy covers the
+      <a href="https://github.com/mcpwright">mcpwright</a> suite of Model Context Protocol (MCP)
+      servers — including <a href="/edgar/">edgar-mcp</a> and <a href="/census/">census-mcp</a> —
+      whether installed via <code>uvx</code>, as a desktop extension (MCPB), or from source.</p>
+
+      <h2>What we collect</h2>
+      <p><b>Nothing.</b> These servers do not collect, store, or transmit any personal
+      information about you. There are no accounts, no tracking, no analytics, and no telemetry.
+      The maintainer receives no data about your usage.</p>
+
+      <h2>How the servers run</h2>
+      <p>Each server is a local process that runs on your own computer (started by your MCP
+      client — Claude Desktop, Claude Code, or another client). It exposes read-only tools to
+      that client. Your prompts and the tool results stay between your client and the local
+      server; they are not sent to the maintainer.</p>
+
+      <h2>Network requests &amp; third parties</h2>
+      <p>The only outbound network requests a server makes are to the <b>public data source it
+      wraps</b>, to fetch the public data you asked for:</p>
+      <ul class="clean">
+        <li><b>census-mcp</b> → the U.S. Census Bureau API (<code>api.census.gov</code>), to
+        download the public American Community Survey dataset. This happens during
+        <code>setup</code>/<code>refresh</code> using <em>your own</em> Census API key; after
+        that, lookups are served from a local store with <b>no further network calls</b>.</li>
+        <li><b>edgar-mcp</b> → the U.S. SEC EDGAR API (<code>data.sec.gov</code>), to fetch
+        public filings on request.</li>
+      </ul>
+      <p>These are U.S. government data services. Your use of them is governed by their own
+      terms and privacy policies (<a href="https://www.census.gov/privacy">census.gov/privacy</a>,
+      <a href="https://www.sec.gov/privacy">sec.gov/privacy</a>). The servers send these
+      services only what is needed to retrieve the public data you requested — no personal
+      information about you.</p>
+
+      <h2>API keys &amp; credentials</h2>
+      <p>Where a server needs an API key (e.g. <code>CENSUS_API_KEY</code> for census-mcp), the
+      key is <b>yours</b> and is read from your local environment / your MCP client's
+      configuration. It is used only to authenticate your requests to that public data source.
+      It is <b>never logged, never displayed, and never sent anywhere else.</b></p>
+
+      <h2>Data storage &amp; retention</h2>
+      <p>Any data a server caches (for example, census-mcp's downloaded ACS dataset) is stored
+      <b>locally on your machine</b>, under your OS cache/data directory, so repeat lookups are
+      fast and offline. It contains only public reference data — nothing about you. You can
+      delete it at any time; uninstalling the server and removing that directory removes
+      everything it stored.</p>
+
+      <h2>Children's privacy</h2>
+      <p>These are developer tools that handle public reference data and collect no personal
+      information from anyone, including children.</p>
+
+      <h2>Changes to this policy</h2>
+      <p>If this policy changes, the updated version will be posted here with a new "last
+      updated" date.</p>
+
+      <h2>Contact</h2>
+      <p>Questions about privacy? Open an issue or discussion on the relevant repository under
+      <a href="https://github.com/mcpwright">github.com/mcpwright</a>, or on the suite org
+      itself. The suite is built by
+      <a href="https://github.com/devender">Devender Gollapally</a>.</p>
+    </section>
+  </main>
+
+  <footer class="site">
+    <div class="wrap">
+      Part of <a href="/">mcpwright</a> · built by
+      <a href="https://github.com/devender">Devender Gollapally</a> ·
+      <a href="https://github.com/mcpwright">GitHub</a>
+    </div>
+  </footer>
+</body>
+</html>
