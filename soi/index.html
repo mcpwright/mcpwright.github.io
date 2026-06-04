@@ -1,0 +1,190 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>soi-mcp — IRS income &amp; tax by ZIP, inside your agent</title>
+  <meta name="description" content="An MCP server for IRS Statistics of Income (SOI) data by ZIP: AGI distribution, tax, credits, and deductions from filed returns — bulk-downloaded once into a local store, then served offline." />
+
+  <link rel="icon" href="/favicon.svg" type="image/svg+xml" />
+  <link rel="icon" href="/favicon-32.png" sizes="32x32" type="image/png" />
+  <link rel="apple-touch-icon" href="/apple-touch-icon.png" />
+
+  <meta property="og:type" content="website" />
+  <meta property="og:site_name" content="mcpwright" />
+  <meta property="og:title" content="soi-mcp — IRS income &amp; tax by ZIP, inside your agent" />
+  <meta property="og:description" content="The actual income shape of any ZIP — AGI distribution, tax, credits, deductions — from the IRS Statistics of Income. Bulk-loaded once, then served offline." />
+  <meta property="og:url" content="https://mcpwright.com/soi/" />
+  <meta property="og:image" content="https://mcpwright.com/og.png" />
+  <meta name="twitter:card" content="summary_large_image" />
+
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght,SOFT,WONK@9..144,300..700,0..100,0..1&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="/style.css" />
+</head>
+<body>
+  <header class="site">
+    <div class="wrap">
+      <a class="brand" href="/">mcpwright<span class="dot">.</span></a>
+      <nav>
+        <a href="#install">Install</a>
+        <a href="https://github.com/mcpwright/soi-mcp">GitHub</a>
+      </nav>
+    </div>
+  </header>
+
+  <main class="wrap">
+    <div class="hero">
+      <p class="kicker">soi-mcp</p>
+      <h1>The shape of a ZIP's income.</h1>
+      <p class="lede">
+        An <a href="https://modelcontextprotocol.io">MCP</a> server that lets an LLM pull the
+        real income distribution, tax, credits, and deductions of any U.S. ZIP — straight from
+        the IRS <a href="https://www.irs.gov/statistics/soi-tax-stats-individual-income-tax-statistics-zip-code-data-soi">Statistics
+        of Income</a>. Not a survey estimate — the aggregates of actual filed returns. Read-only,
+        all public-domain data, <b>no API key</b>, bulk-downloaded once then served offline.
+      </p>
+
+      <div class="terminal" aria-hidden="true">
+        <div class="bar"><i class="r"></i><i class="y"></i><i class="g"></i><span class="ttl">claude — soi</span></div>
+        <div class="body">
+          <div><span class="p">❯</span> uvx mcpwright-soi setup&nbsp;&nbsp;<span class="dim"># one-time: bulk-load IRS SOI into a local store</span></div>
+          <div><span class="p">❯</span> what does income in 10021 actually look like — not the average, the shape</div>
+          <div><span class="tool">⏺ soi</span><span class="dim"> · lookup_zip → get_agi_distribution</span></div>
+          <div><span class="ok">→</span> Upper East Side, NY — the $200k+ bracket is <span class="ok">35.2%</span> of filers</div>
+          <div class="indent dim">…but holds 90.6% of the ZIP's $12.8B in AGI — a single median would hide that</div>
+        </div>
+      </div>
+    </div>
+
+    <section>
+      <h2>See it in action</h2>
+      <p class="muted">One prompt in Claude Code, start to finish:</p>
+      <blockquote class="prompt">Using soi, show me the income distribution of ZIP 10021 — what share of filers are high earners, and how concentrated is the income?</blockquote>
+
+      <h3>What happened</h3>
+      <ol class="walkthrough">
+        <li>Claude called <code>lookup_zip("10021")</code> to confirm the ZIP — <b>Upper East Side, NY</b>, <b>22,450</b> returns, tax year <b>2022</b> (the latest SOI ZIP release).</li>
+        <li>Then <code>get_agi_distribution("10021")</code> returned all six IRS AGI brackets. The top bracket (<b>$200k+</b>) is <b>35.2%</b> of returns but holds <b>90.6%</b> of the ZIP's <b>$12.8B</b> in AGI; the bottom three brackets (under $75k) are <b>30.5%</b> of filers yet under <b>2%</b> of the income.</li>
+        <li>That's the point of the signature tool: a ZIP's <em>income shape</em>, not just an average. Atherton's $1.6M average AGI and the Upper East Side's $571k both hide wildly different distributions underneath.</li>
+      </ol>
+      <p class="muted">Every figure comes from the local SOI store the server built on first run — not the model's memory.</p>
+    </section>
+
+    <section>
+      <h2>What you can ask</h2>
+      <p class="muted">Real exchanges (tax year 2022), driven entirely by the tools below.</p>
+
+      <div class="example">
+        <p class="q">Which is wealthier per filer — Atherton (94027), Fisher Island (33109), or Beverly Hills (90210)?</p>
+        <p class="a"><code>compare_zips</code> by average AGI: <b>Fisher Island, FL</b> leads at
+        <b>$4.40M</b> per return (just 400 returns, $1.76B total AGI), then <b>Atherton, CA</b>
+        at <b>$1.59M</b>, then <b>Beverly Hills</b> at <b>$665k</b> — sorted highest-first.</p>
+      </div>
+
+      <div class="example">
+        <p class="q">How much income tax does ZIP 94027 actually pay?</p>
+        <p class="a"><code>get_tax</code> on <b>Atherton, CA</b>: <b>$1.24B</b> in income tax and
+        <b>$1.35B</b> in total tax liability across 3,050 returns — an average total tax of
+        <b>$443,303</b> per return.</p>
+      </div>
+
+      <div class="example">
+        <p class="q">What's the EITC take-up in Brownsville, TX (78521)?</p>
+        <p class="a"><code>get_credits</code>: of <b>38,820</b> returns, <b>15,550</b> (40%)
+        claimed the Earned Income Tax Credit for <b>$51.0M</b> total — broken out by qualifying
+        children (none / one / two / three+), the refundable side of the code most ZIP datasets
+        never surface.</p>
+      </div>
+
+      <div class="example">
+        <p class="q">How big is California's individual income base, and how does it compare to New York's?</p>
+        <p class="a"><code>get_state_totals</code> from the IRS state rollup: <b>CA</b> — 18.1M
+        returns, <b>$2.0T</b> in AGI, $110,196 average; <b>NY</b> — 9.6M returns, <b>$1.03T</b>
+        in AGI. Each comes with the state's own six-bracket AGI distribution.</p>
+      </div>
+    </section>
+
+    <section>
+      <h2>Tools</h2>
+      <table>
+        <tr><th>Tool</th><th>What it does</th></tr>
+        <tr><td><code>lookup_zip</code></td><td>Confirm a ZIP has SOI data; returns state, number of returns, individuals, and the tax year.</td></tr>
+        <tr><td><code>get_income</code></td><td>Total AGI, average AGI per return, and the main income components (wages, interest, dividends, business income, capital gains).</td></tr>
+        <tr><td><code>get_agi_distribution</code></td><td><b>The signature.</b> All six IRS AGI brackets for a ZIP — returns and AGI per bracket, plus each bracket's share. The income <em>shape</em>.</td></tr>
+        <tr><td><code>get_tax</code></td><td>Income tax, total tax liability, total payments, and average total tax per return.</td></tr>
+        <tr><td><code>get_credits</code></td><td>Refundable-credit take-up: the EITC (split by qualifying children) and the additional child tax credit.</td></tr>
+        <tr><td><code>get_deductions</code></td><td>Standard vs. itemized deductions, the taxes-paid (SALT) deduction, and the % of returns that itemized.</td></tr>
+        <tr><td><code>get_filing_status</code></td><td>Single / married-joint / head-of-household mix, elderly (65+) returns, and e-file share.</td></tr>
+        <tr><td><code>compare_zips</code></td><td>Rank several ZIPs by one metric (avg AGI, % earning $200k+, income tax, EITC, …), highest first.</td></tr>
+        <tr><td><code>get_state_totals</code></td><td>State-level totals and AGI distribution from the IRS 00000 state-rollup row.</td></tr>
+        <tr><td><code>get_soi_field</code></td><td>Escape hatch: the raw value of any SOI field for a ZIP, by code or friendly name.</td></tr>
+      </table>
+      <p class="muted">SOI is aggregated from <em>actual filed returns</em> (not a survey), so it
+      reports income, tax, and credits the Census ACS can't. The ZIP release lags ~2–3 years —
+      tax year <b>2022</b> loads by default, and older years are one <code>refresh &lt;year&gt;</code>
+      away. ZIPs with fewer than 100 returns are suppressed by the IRS for privacy.</p>
+    </section>
+
+    <section id="install">
+      <h2>Install</h2>
+      <p class="muted">Requires Python 3.12+ and <a href="https://docs.astral.sh/uv/">uv</a>.
+      <b>No API key</b> — the data is public domain.</p>
+
+      <pre><span class="cmd">uvx</span> mcpwright-soi <span class="flag">setup</span>&nbsp;&nbsp;&nbsp;&nbsp;<span class="cmt"># one-time: bulk-download the latest SOI year into a local store</span></pre>
+
+      <h3>Claude Code</h3>
+      <pre><span class="cmd">claude</span> <span class="flag">mcp add</span> soi <span class="punct">--</span> <span class="cmd">uvx</span> mcpwright-soi</pre>
+
+      <h3>Claude Desktop</h3>
+      <p class="muted">Add to <code>claude_desktop_config.json</code>:</p>
+      <pre>{
+  <span class="key">"mcpServers"</span>: {
+    <span class="key">"soi"</span>: {
+      <span class="key">"command"</span>: <span class="str">"uvx"</span>,
+      <span class="key">"args"</span>: [<span class="str">"mcpwright-soi"</span>]
+    }
+  }
+}</pre>
+
+      <h3>OpenAI &amp; other MCP clients</h3>
+      <p class="muted">It's a standard stdio MCP server — so it works beyond Claude: the
+      OpenAI Agents SDK, Cursor, VS Code, Cline, Goose, Zed, and more all launch it the
+      same way.</p>
+      <pre>{
+  <span class="key">"mcpServers"</span>: {
+    <span class="key">"soi"</span>: {
+      <span class="key">"command"</span>: <span class="str">"uvx"</span>,
+      <span class="key">"args"</span>: [<span class="str">"mcpwright-soi"</span>]
+    }
+  }
+}</pre>
+
+      <p class="muted" style="margin-top:14px;">
+        The first run downloads the full SOI ZIP file (~28k ZIPs, all six AGI brackets each) into
+        a local SQLite store, so every later lookup is instant and offline — no per-query network
+        calls, no rate limits, no key. <code>mcpwright-soi refresh</code> re-pulls when a new year
+        drops; <code>refresh &lt;year&gt;</code> loads a specific older tax year for comparison.
+      </p>
+      <p style="margin-top:18px;">
+        Source, full tool reference, and roadmap →
+        <a href="https://github.com/mcpwright/soi-mcp">github.com/mcpwright/soi-mcp</a>
+      </p>
+      <p class="muted">
+        Questions or ideas? → <a href="https://github.com/mcpwright/soi-mcp/discussions">Discussions</a>
+        &nbsp;·&nbsp; found a bug? → <a href="https://github.com/mcpwright/soi-mcp/issues">Issues</a>
+      </p>
+    </section>
+  </main>
+
+  <footer class="site">
+    <div class="wrap">
+      Part of <a href="/">mcpwright</a> · built by
+      <a href="https://github.com/devender">Devender Gollapally</a> ·
+      <a href="https://github.com/mcpwright/soi-mcp">repo</a> ·
+      <a href="https://github.com/mcpwright/soi-mcp/discussions">questions</a>
+    </div>
+  </footer>
+</body>
+</html>
