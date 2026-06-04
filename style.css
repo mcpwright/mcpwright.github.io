@@ -72,6 +72,7 @@ h3 {
 }
 p { color: var(--text); }
 .muted { color: var(--muted); }
+.more { margin-top: 20px; color: var(--muted); font-size: 15px; }
 
 a { color: var(--accent); }
 
