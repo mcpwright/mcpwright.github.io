@@ -1,0 +1,215 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>fred-mcp — FRED economic data, with a memory, inside your agent</title>
+  <meta name="description" content="An MCP server for FRED: 800,000+ economic time series plus ALFRED vintage data — any series exactly as it was known on a past date, and any data point's full revision history." />
+
+  <link rel="icon" href="/favicon.svg" type="image/svg+xml" />
+  <link rel="icon" href="/favicon-32.png" sizes="32x32" type="image/png" />
+  <link rel="apple-touch-icon" href="/apple-touch-icon.png" />
+
+  <meta property="og:type" content="website" />
+  <meta property="og:site_name" content="mcpwright" />
+  <meta property="og:title" content="fred-mcp — FRED economic data, with a memory, inside your agent" />
+  <meta property="og:description" content="The numbers you remember aren't the numbers they had. FRED time series plus ALFRED vintages: data as originally published, before revisions." />
+  <meta property="og:url" content="https://mcpwright.com/fred/" />
+  <meta property="og:image" content="https://mcpwright.com/og.png" />
+  <meta name="twitter:card" content="summary_large_image" />
+
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght,SOFT,WONK@9..144,300..700,0..100,0..1&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="/style.css" />
+</head>
+<body>
+  <header class="site">
+    <div class="wrap">
+      <a class="brand" href="/">mcpwright<span class="dot">.</span></a>
+      <nav>
+        <a href="#install">Install</a>
+        <a href="https://github.com/mcpwright/fred-mcp">GitHub</a>
+      </nav>
+    </div>
+  </header>
+
+  <main class="wrap">
+    <div class="hero">
+      <p class="kicker">fred-mcp</p>
+      <h1>Economic data, with a memory.</h1>
+      <p class="lede">
+        An <a href="https://modelcontextprotocol.io">MCP</a> server for
+        <a href="https://fred.stlouisfed.org/">FRED®</a> — 800,000+ U.S. and international
+        time series — plus the part nobody else ships: <b>ALFRED® vintage data</b>. Ask for
+        any series exactly as it was known on a past date, or walk a single data point
+        through every revision it ever had. Because the numbers you remember aren't the
+        numbers they had. Read-only, live API with a revision-aware cache, your own free key.
+      </p>
+
+      <div class="terminal" aria-hidden="true">
+        <div class="bar"><i class="r"></i><i class="y"></i><i class="g"></i><span class="ttl">claude — fred</span></div>
+        <div class="body">
+          <div><span class="p">❯</span> uvx mcpwright-fred&nbsp;&nbsp;<span class="dim"># FRED in your agent — bring your free API key</span></div>
+          <div><span class="p">❯</span> how bad did Q4 2008 GDP look in real time, before the revisions?</div>
+          <div><span class="tool">⏺ fred</span><span class="dim"> · get_series_as_of → get_observations</span></div>
+          <div><span class="ok">→</span> as known on 2009-02-15: <span class="ok">−3.8%</span> annualized — today's data says <span class="ok">−8.5%</span></div>
+          <div class="indent dim">the stimulus debate ran on the first number</div>
+        </div>
+      </div>
+    </div>
+
+    <section>
+      <h2>See it in action</h2>
+      <p class="muted">One prompt in Claude Code, start to finish:</p>
+      <blockquote class="prompt">Using fred, what did Q4 2008 GDP look like to policymakers in February 2009 — and how different is the picture today?</blockquote>
+
+      <h3>What happened</h3>
+      <ol class="walkthrough">
+        <li>Claude called <code>get_series_as_of("GDPC1", "2009-02-15")</code> — real GDP
+        <em>exactly as known that day</em>: Q4-2008 at <b>$11,599.4B</b> against Q3's
+        <b>$11,712.4B</b>, a <b>−3.8%</b> annualized decline. Even the units are of the era —
+        the vintage metadata says <b>chained 2000 dollars</b>.</li>
+        <li>Then <code>get_observations("GDPC1")</code> for today's data: the same quarter now
+        reads <b>$16,485.4B</b> vs <b>$16,854.3B</b> (chained <b>2017</b> dollars) — a
+        <b>−8.5%</b> annualized collapse, more than twice as steep as anyone knew at the time.</li>
+        <li>That's the point of the vintage lane: TARP and the stimulus were debated on
+        <b>−3.8%</b>. An agent reasoning about what decision-makers knew from <em>current</em>
+        data is quietly wrong — <code>get_series_as_of</code> makes as-published data a
+        first-class question.</li>
+      </ol>
+      <p class="muted">Every figure above came from the FRED API through the tools — run live, not from the model's memory.</p>
+    </section>
+
+    <section>
+      <h2>What you can ask</h2>
+      <p class="muted">Real exchanges, run live against the FRED API (answers as of June 2026 — ask again and they're current).</p>
+
+      <div class="example">
+        <p class="q">Was the May 2020 COVID unemployment rate ever revised?</p>
+        <p class="a"><code>get_revision_history("UNRATE", "2020-05-01")</code>: first published
+        as <b>13.3%</b> on 2020-06-05, nudged to <b>13.2%</b>, back to 13.3, and stands at
+        <b>13.2%</b> today — every revision with the date it was published.</p>
+      </div>
+
+      <div class="example">
+        <p class="q">What mortgage rate did the Fed see going into the March 2022 liftoff meeting?</p>
+        <p class="a"><code>get_series_as_of("MORTGAGE30US", "2022-03-16")</code>: the latest
+        print known that morning was <b>3.85%</b>. <code>get_latest</code> today: <b>6.48%</b>.</p>
+      </div>
+
+      <div class="example">
+        <p class="q">How has inflation trended over the past year?</p>
+        <p class="a"><code>get_observations("CPIAUCSL", transform="pct_change_yoy")</code>:
+        <b>2.4% → 3.3% → 3.8% → 4.2%</b> over Feb–May 2026 — re-accelerating, with the
+        transform done server-side so the model never does arithmetic on raw index levels.</p>
+      </div>
+
+      <div class="example">
+        <p class="q">What's the unemployment rate right now — and when's the next jobs report?</p>
+        <p class="a"><code>get_latest("UNRATE")</code>: <b>4.3%</b> (May 2026), next scheduled
+        release <b>2026-07-02</b> — the release calendar is wired in, so "wait for the next
+        print" is answerable too.</p>
+      </div>
+
+      <div class="example">
+        <p class="q">How often does GDP actually get revised?</p>
+        <p class="a"><code>get_vintage_dates("GDPC1")</code>: <b>415</b> vintages since
+        1991-12-04 — roughly one a month. A "final" GDP number is a polite fiction, which is
+        rather the theme of this server.</p>
+      </div>
+    </section>
+
+    <section>
+      <h2>Tools</h2>
+      <table>
+        <tr><th>Tool</th><th>What it does</th></tr>
+        <tr><td><code>search_series</code></td><td>Find series IDs by free text ("unemployment rate" → UNRATE), best matches first.</td></tr>
+        <tr><td><code>get_series</code></td><td>One series' full metadata and verbatim notes (third-party copyright notices included, never stripped).</td></tr>
+        <tr><td><code>get_observations</code></td><td>A date window of values with server-side transforms (<code>pct_change_yoy</code>, …) and frequency downsampling.</td></tr>
+        <tr><td><code>get_latest</code></td><td>The most recent value plus the next scheduled release date. Skips the "." rows daily series publish on holidays.</td></tr>
+        <tr><td><code>compare_series</code></td><td>2–5 series aligned on one date axis (with a guardrail: mixed native frequencies must be harmonized explicitly).</td></tr>
+        <tr><td><code>get_release_calendar</code></td><td>Upcoming data releases — "what comes out this week?"</td></tr>
+        <tr><td><code>get_series_as_of</code></td><td><b>The signature.</b> A series exactly as it was known on a past date — values <em>and metadata</em> pinned to the vintage.</td></tr>
+        <tr><td><code>get_revision_history</code></td><td><b>The signature, part two.</b> One data point's life: earliest archived print → every revision (dated) → today, with the total drift.</td></tr>
+        <tr><td><code>get_vintage_dates</code></td><td>When a series was released or revised; bounds what the vintage tools can see.</td></tr>
+      </table>
+      <p class="muted">Current values get revised — that's not a flaw in the data, it's how
+      statistics work — so the tool descriptions say so, and the vintage lane exists. ALFRED's
+      archive starts late for some series (GDP's vintages begin in 1991); the tools report
+      <code>archive_starts</code> honestly rather than passing off an archived value as the
+      original print.</p>
+    </section>
+
+    <section id="install">
+      <h2>Install</h2>
+      <p class="muted">Requires Python 3.12+, <a href="https://docs.astral.sh/uv/">uv</a>, and
+      <b>your own free FRED API key</b> (takes seconds:
+      <a href="https://fred.stlouisfed.org/docs/api/api_key_request.html">request one here</a> —
+      keys are personal under the FRED terms).</p>
+
+      <h3>Claude Code</h3>
+      <pre><span class="cmd">claude</span> <span class="flag">mcp add</span> fred <span class="flag">-e</span> FRED_API_KEY=<span class="str">your-key-here</span> <span class="punct">--</span> <span class="cmd">uvx</span> mcpwright-fred</pre>
+
+      <h3>Claude Desktop</h3>
+      <p class="muted">Add to <code>claude_desktop_config.json</code>:</p>
+      <pre>{
+  <span class="key">"mcpServers"</span>: {
+    <span class="key">"fred"</span>: {
+      <span class="key">"command"</span>: <span class="str">"uvx"</span>,
+      <span class="key">"args"</span>: [<span class="str">"mcpwright-fred"</span>],
+      <span class="key">"env"</span>: { <span class="key">"FRED_API_KEY"</span>: <span class="str">"your-key-here"</span> }
+    }
+  }
+}</pre>
+
+      <h3>OpenAI &amp; other MCP clients</h3>
+      <p class="muted">It's a standard stdio MCP server — so it works beyond Claude: the
+      OpenAI Agents SDK, Cursor, VS Code, Cline, Goose, Zed, and more all launch it the
+      same way.</p>
+      <pre>{
+  <span class="key">"mcpServers"</span>: {
+    <span class="key">"fred"</span>: {
+      <span class="key">"command"</span>: <span class="str">"uvx"</span>,
+      <span class="key">"args"</span>: [<span class="str">"mcpwright-fred"</span>],
+      <span class="key">"env"</span>: { <span class="key">"FRED_API_KEY"</span>: <span class="str">"your-key-here"</span> }
+    }
+  }
+}</pre>
+
+      <p class="muted" style="margin-top:14px;">
+        Live API calls with a revision-aware in-memory cache: vintage reads are immutable
+        (what was known on a date never changes) and cache long; current data stays fresh;
+        requests are throttled well under FRED's rate limit. Nothing is mirrored or persisted.
+        <code>FRED_MCP_CACHE=0</code> disables caching entirely.
+      </p>
+      <p style="margin-top:18px;">
+        Source, full tool reference, and roadmap →
+        <a href="https://github.com/mcpwright/fred-mcp">github.com/mcpwright/fred-mcp</a>
+      </p>
+      <p class="muted">
+        Questions or ideas? → <a href="https://github.com/mcpwright/fred-mcp/discussions">Discussions</a>
+        &nbsp;·&nbsp; found a bug? → <a href="https://github.com/mcpwright/fred-mcp/issues">Issues</a>
+      </p>
+      <p class="muted" style="margin-top:14px;">
+        This product uses the FRED® API but is not endorsed or certified by the Federal
+        Reserve Bank of St. Louis. Use is subject to the
+        <a href="https://fred.stlouisfed.org/docs/api/terms_of_use.html">FRED® API Terms of Use</a>.
+        FRED® and ALFRED® are registered trademarks of the Federal Reserve Bank of St. Louis.
+        Some series are owned by third parties — their notes carry the owners' terms, and the
+        tools pass those through verbatim.
+      </p>
+    </section>
+  </main>
+
+  <footer class="site">
+    <div class="wrap">
+      Part of <a href="/">mcpwright</a> · built by
+      <a href="https://github.com/devender">Devender Gollapally</a> ·
+      <a href="https://github.com/mcpwright/fred-mcp">repo</a> ·
+      <a href="https://github.com/mcpwright/fred-mcp/discussions">questions</a> ·
+      not endorsed or certified by the Federal Reserve Bank of St. Louis
+    </div>
+  </footer>
+</body>
+</html>
